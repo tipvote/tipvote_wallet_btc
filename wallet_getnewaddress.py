@@ -15,13 +15,19 @@ def getnewaddress(user_id):
     :return:
     """
 
-    userswallet = db.session.query(BtcWallet).filter_by(user_id=user_id).first()
-    walletaddress = db.session.query(BtcWalletAddresses).filter(BtcWalletAddresses.status == 0).first()
+    userswallet = db.session.query(BtcWallet) \
+        .filter_by(user_id=user_id) \
+        .first()
+    walletaddress = db.session.query(BtcWalletAddresses) \
+        .filter(BtcWalletAddresses.status == 0) \
+        .first()
 
     # Test to see if user doesnt have any current incomming transactions..get new one if not
-    incdeposit = db.session.query(TransactionsBtc).filter(TransactionsBtc.category == 3,
-                                                          TransactionsBtc.confirmed == 0,
-                                                          TransactionsBtc.user_id == user_id).first()
+    incdeposit = db.session.query(TransactionsBtc) \
+        .filter(TransactionsBtc.category == 3,
+                TransactionsBtc.confirmed == 0,
+                TransactionsBtc.user_id == user_id) \
+        .first()
 
     if incdeposit is None:
         # status 0 = not used
@@ -54,8 +60,8 @@ def getnewaddress(user_id):
             walletaddress.user_id = user_id
             walletaddress.status = 1
 
-        elif userswallet.address3status == 0\
-                and userswallet.address2status == 0\
+        elif userswallet.address3status == 0 \
+                and userswallet.address2status == 0 \
                 and userswallet.address1status == 0:
             userswallet.address3status = 2
             userswallet.address1 = walletaddress.btcaddress
@@ -65,8 +71,8 @@ def getnewaddress(user_id):
             walletaddress.user_id = user_id
             walletaddress.status = 1
 
-        elif userswallet.address3status == 1\
-                and userswallet.address2status == 1\
+        elif userswallet.address3status == 1 \
+                and userswallet.address2status == 1 \
                 and userswallet.address1status == 1:
             userswallet.address3status = 2
             userswallet.address1 = walletaddress.btcaddress
@@ -76,8 +82,8 @@ def getnewaddress(user_id):
             walletaddress.user_id = user_id
             walletaddress.status = 1
 
-        elif userswallet.address3status == 2\
-                and userswallet.address2status == 2\
+        elif userswallet.address3status == 2 \
+                and userswallet.address2status == 2 \
                 and userswallet.address1status == 2:
             userswallet.address3status = 2
             userswallet.address1 = walletaddress.btcaddress
@@ -87,8 +93,8 @@ def getnewaddress(user_id):
             walletaddress.user_id = user_id
             walletaddress.status = 1
 
-        elif userswallet.address3status == 3\
-                and userswallet.address2status == 3\
+        elif userswallet.address3status == 3 \
+                and userswallet.address2status == 3 \
                 and userswallet.address1status == 3:
             userswallet.address3status = 2
             userswallet.address1 = walletaddress.btcaddress
