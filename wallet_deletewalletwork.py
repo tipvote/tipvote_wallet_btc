@@ -6,7 +6,7 @@ from app.models import BtcWalletWork
 # run once every ten minutes
 def deleteoldorder():
 
-    getwork = BtcWalletWork.query.filter_by(type=0).all()
+    getwork = db.session.query(BtcWalletWork).filter_by(type=0).all()
     if getwork:
         for f in getwork:
             db.session.delete(f)

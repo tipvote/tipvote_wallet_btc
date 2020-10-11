@@ -39,7 +39,6 @@ def getthebalance():
     return response_json
 
 
-
 def getwalletinfo():
 
     # standard json header

@@ -79,11 +79,11 @@ def sendcoin(user_id, sendto, amount, comment):
     timestamp = datetime.utcnow()
 
     # get the fee from db
-    getwallet = BtcWalletFee.query.filter_by(id=1).first()
+    getwallet = db.session.query(BtcWalletFee).filter_by(id=1).first()
     walletfee = getwallet.btc
 
     # get the users wall
-    userswallet = BtcWallet.query.filter_by(user_id=user_id).first()
+    userswallet = db.session.query(BtcWallet).filter_by(user_id=user_id).first()
 
     # proceed to see if balances check
     curbal = floating_decimals(userswallet.currentbalance, 8)
@@ -149,7 +149,7 @@ def mainquery():
     """
     # main query
     """
-    work = BtcWalletWork.query \
+    work = db.session.query(BtcWalletWork) \
         .filter(BtcWalletWork.type == 2) \
         .order_by(BtcWalletWork.created.desc()) \
         .all()

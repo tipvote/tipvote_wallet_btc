@@ -10,7 +10,7 @@ from app.models import BtcWalletAddresses
 def generate_addresses():
 
     # query amount addresses that are not uses
-    get_available_addresses = BtcWalletAddresses.query\
+    get_available_addresses = db.session.query(BtcWalletAddresses)\
         .filter(BtcWalletAddresses.status == 0)\
         .count()
 
@@ -22,17 +22,17 @@ def generate_addresses():
 
             # call the rpc
             newwalletaddress = callforaddress()
+            if newwalletaddress["error"] is None:
+                # get the new address
+                the_address = newwalletaddress["result"]
 
-            # get the new address
-            the_address = newwalletaddress["address"]
+                # add to db addresses
+                walletadd = BtcWalletAddresses(
+                    btcaddress=the_address,
+                    status=0,
+                     )
 
-            # add to db addresses
-            walletadd = BtcWalletAddresses(
-                btcaddress=the_address,
-                status=0,
-                 )
-
-            db.session.add(walletadd)
+                db.session.add(walletadd)
 
         db.session.commit()
     else:
@@ -59,12 +59,9 @@ def callforaddress():
         headers=headers,
     )
 
-    # print response
-    print(response.url)
-
     # the response in json format
     response_json = response.json()
-
+    print(response_json)
     return response_json
 
 

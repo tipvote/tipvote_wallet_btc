@@ -32,7 +32,7 @@ def addtounconfirmed(amount, user_id, txid):
     """
 
     # get unconfirmed transactions
-    unconfirmedtable = BtcUnconfirmed.query.filter_by(user_id=user_id).first()
+    unconfirmedtable = db.session.query(BtcUnconfirmed).filter_by(user_id=user_id).first()
 
     # put to decimal
     decamount = floating_decimals(amount, 8)
@@ -47,6 +47,7 @@ def addtounconfirmed(amount, user_id, txid):
             unconfirmed3=0,
             unconfirmed4=0,
             unconfirmed5=0,
+
 
         )
         db.session.add(newunconfirmed)
@@ -88,7 +89,7 @@ def removeunconfirmed(user_id, txid):
     """
 
     # get unconfirmed in database
-    unconfirmeddelete = BtcUnconfirmed.query.filter_by(user_id=user_id).first()
+    unconfirmeddelete = db.session.query(BtcUnconfirmed).filter_by(user_id=user_id).first()
 
     # find matching txid in table
     if unconfirmeddelete.txid1 == txid:
@@ -124,7 +125,7 @@ def getbalanceunconfirmed(user_id):
     """
     this function removes the amount from unconfirmed
     """
-    unconfirmeddelete = BtcUnconfirmed.query.filter_by(user_id=user_id).first()
+    unconfirmeddelete = db.session.query(BtcUnconfirmed).filter_by(user_id=user_id).first()
     a = Decimal(unconfirmeddelete.unconfirmed1)
     b = Decimal(unconfirmeddelete.unconfirmed2)
     c = Decimal(unconfirmeddelete.unconfirmed3)
@@ -133,7 +134,7 @@ def getbalanceunconfirmed(user_id):
 
     total = a + b + c + d + e
 
-    wallet = BtcWallet.query.filter_by(user_id=user_id).first()
+    wallet = db.session.query(BtcWallet).filter_by(user_id=user_id).first()
     totalchopped = floating_decimals(total, 8)
     wallet.unconfirmed = totalchopped
     db.session.add(wallet)
@@ -143,7 +144,7 @@ def orphan(txid, amount2, address):
     """
     this function is if they cant find a matching address
     """
-    getorphan = BtcTransOrphan.query.filter_by(txid=txid).first()
+    getorphan = db.session.query(BtcTransOrphan).filter_by(txid=txid).first()
     if getorphan:
         pass
     else:
@@ -300,7 +301,7 @@ def addcoin():
         howmanyconfs = int(confirmations)
 
         # find the wallet that matches the address
-        userwallets = BtcWallet.query \
+        userwallets = db.session.query(BtcWallet) \
             .filter(or_(BtcWallet.address1 == address,
                         BtcWallet.address2 == address,
                         BtcWallet.address3 == address
@@ -312,7 +313,7 @@ def addcoin():
         if userwallets:
 
             # get the transactions
-            transactions = TransactionsBtc.query\
+            transactions = db.session.query(TransactionsBtc)\
                 .filter(TransactionsBtc.txid == txid)\
                 .first()
 
@@ -346,7 +347,7 @@ def getincommingcoin():
         "params":
             {
              "minconf": 0,
-             "maxconf": 50,
+             "maxconf": 100,
              }
     }
 
